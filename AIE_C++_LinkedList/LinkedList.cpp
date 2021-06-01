@@ -129,6 +129,7 @@ public:
 
     void PrePrint(Node* n)
     {
+        if(m_first != nullptr && m_last != nullptr)
         PrePrint(n->next);
         PrePrint(n->prev);
         std::cout << n->value << std::endl;
