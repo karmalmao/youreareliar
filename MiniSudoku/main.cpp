@@ -4,7 +4,7 @@
 bool isMiniSudoku(std::vector<std::vector<int>> arr)
 {
     int False = true;
-    int True = false;
+    int True = !False;
     int one = false;
     int two = false;
     int three = false;
@@ -14,6 +14,9 @@ bool isMiniSudoku(std::vector<std::vector<int>> arr)
     int seven = false;
     int eight = false;
     int nine = false;
+
+    //entirely readable good luck
+
 
     for (int i = 0; i < 3; i++)
     {
