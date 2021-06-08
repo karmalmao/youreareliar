@@ -12,10 +12,10 @@ IPCServer::IPCServer()
 IPCServer::~IPCServer()
 {
 	// unmap the memory block since we're done with it
-	UnmapViewOfFile(data);
+	UnmapViewOfFile(m_data);
 
 	// close the shared file
-	CloseHandle(fileHandle);
+	CloseHandle(m_fileHandle);
 }
 void IPCServer::Run()
 {
@@ -23,7 +23,8 @@ void IPCServer::Run()
 	int ch;
 
 
-
+	m_fileHandle = CreateFileMapping(INVALID_HANDLE_VALUE,nullptr,PAGE_READWRITE,0,sizeof(MyData), m_sharedMemory);
+	m_data = (MyData*)MapViewOfFile(m_fileHandle,FILE_MAP_ALL_ACCESS,0,0,sizeof(MyData));
 	while (able)
 	{
 		int i = rand() % 1000 + 1;
@@ -33,22 +34,22 @@ void IPCServer::Run()
 		double d = rand() % 1000 +1;
 
 		MyData myData = { i, f, c, b, d };
-		if (fileHandle == nullptr)
+		if (m_fileHandle == nullptr)
 		{
 			std::cout << "Could not create file mapping object: " <<
 				GetLastError() << std::endl;
 		}
 
-		if (data == nullptr)
+		if (m_data == nullptr)
 		{
 			std::cout << "Could not map view of file: " <<
 				GetLastError() << std::endl;
 
-			CloseHandle(fileHandle);
+			CloseHandle(m_fileHandle);
 		}
 
 		// write to the memory block
-		*data = myData;
+		*m_data = myData;
 
 		// wait for a keypress to close
 		ch = _getch();

@@ -10,10 +10,10 @@ public:
 
 	virtual void Run();
 
-	HANDLE fileHandle = OpenFileMapping(FILE_MAP_ALL_ACCESS, FALSE, L"MySharedMemory");
+	HANDLE m_fileHandle;
 
 	// map the memory from the shared block to a pointer we can manipulate
-	MyData* data = (MyData*)MapViewOfFile(fileHandle, FILE_MAP_ALL_ACCESS, 0, 0, sizeof(MyData));
+	MyData* m_data;
 protected:
 private:
 };

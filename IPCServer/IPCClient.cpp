@@ -10,35 +10,37 @@ IPCClient::IPCClient()
 IPCClient::~IPCClient()
 {
 	// unmap the memory block since we're done with it
-	UnmapViewOfFile(data);
+	UnmapViewOfFile(m_data);
 
 	// close the shared file
-	CloseHandle(fileHandle);
+	CloseHandle(m_fileHandle);
 }
 void IPCClient::Run()
 {
+	m_data = (MyData*)MapViewOfFile(m_fileHandle, FILE_MAP_ALL_ACCESS, 0, 0, sizeof(MyData));
+	m_fileHandle = OpenFileMapping(FILE_MAP_ALL_ACCESS, FALSE, m_sharedMemory);
 	while (true)
 	{
-		if (fileHandle == nullptr)
+		if (m_fileHandle == nullptr)
 		{
 			std::cout << "Could not create file mapping object: " << GetLastError() << std::endl;
 		}
 
 
-		if (data == nullptr)
+		if (m_data == nullptr)
 		{
 			std::cout << "Could not map view of file: " << GetLastError() << std::endl;
-			CloseHandle(fileHandle);
+			CloseHandle(m_fileHandle);
 		}
 
 		// write out what is in the memory block
 		std::cout << std::boolalpha;
 		std::cout << "MyData = { ";
-		std::cout << data->i << ", ";
-		std::cout << data->f << ", ";
-		std::cout << data->c << ", ";
-		std::cout << data->b << ", ";
-		std::cout << data->d << ", ";
+		std::cout << m_data->i << ", ";
+		std::cout << m_data->f << ", ";
+		std::cout << m_data->c << ", ";
+		std::cout << m_data->b << ", ";
+		std::cout << m_data->d << ", ";
 		std::cout << " };" << std::endl;
 
 		// wait for a keypress to close
